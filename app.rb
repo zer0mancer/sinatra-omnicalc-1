@@ -1,13 +1,13 @@
 require "sinatra"
 require "sinatra/reloader"
+require "active_support/all"
 
 get("/") do
   erb(:hello)
 end
 
-
 get("/howdy") do
-erb(:testing)
+  erb(:testing)
 end
 
 get("/square/new") do
@@ -34,15 +34,27 @@ get("/payment/new") do
   erb(:payment)
 end
 
-get("/payment/results")do
+get("/payment/results") do
   @apr = (params.fetch("apr").to_f / 100) / 12
-  @years = params.fetch("years").to_i * 12
-  @principal = params.fetch("principal").to_fs(:currency)
-  
-  denominator = 1 - (1 + @apr ** -@years)
+  @years = (params.fetch("years").to_i) * 12
+  @principal = params.fetch("principal").to_f
+
+  denominator = 1 - (1 + @apr) ** (-@years)
   numerator = (@apr * @principal) / denominator
-  
+
   @payment = numerator.to_fs(:currency)
 
   erb(:payment_results)
+end
+
+get("/random/new")do
+erb(:random)
+end
+
+get("/random/results") do
+  @min = params.fetch("min").to_f
+  @max = params.fetch("max").to_f
+  @random = rand(@min...@max).to_f
+
+  erb(:random_results)
 end
